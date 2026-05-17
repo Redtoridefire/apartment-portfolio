@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tenant Portfolio — Michael Czarnecki</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── DARK THEME (default) ── */
+    :root, [data-theme="dark"] {
+      --bg:           #0a0a0b;
+      --surface:      #111114;
+      --card:         #16161a;
+      --card-hover:   #1c1c21;
+      --border:       rgba(255,255,255,0.07);
+      --border-hover: rgba(201,168,76,0.25);
+      --accent:       #c9a84c;
+      --accent-dim:   #8a6d2e;
+      --accent-bg:    rgba(201,168,76,0.08);
+      --accent-bg2:   rgba(201,168,76,0.04);
+      --text:         #e8e6e1;
+      --text-inv:     #0a0a0b;
+      --muted:        #7a7873;
+      --check-bg:     rgba(100,210,120,0.08);
+      --check-border: rgba(100,210,120,0.2);
+      --check-color:  #6dd68a;
+      --noise-op:     0.35;
+      --glow-op:      0.06;
+      --shadow:       0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    /* ── LIGHT THEME ── */
+    [data-theme="light"] {
+      --bg:           #f5f3ef;
+      --surface:      #eeece8;
+      --card:         #ffffff;
+      --card-hover:   #faf9f7;
+      --border:       rgba(0,0,0,0.08);
+      --border-hover: rgba(160,120,40,0.35);
+      --accent:       #9a7230;
+      --accent-dim:   #c9a84c;
+      --accent-bg:    rgba(160,120,40,0.07);
+      --accent-bg2:   rgba(160,120,40,0.03);
+      --text:         #1a1814;
+      --text-inv:     #f5f3ef;
+      --muted:        #8a8480;
+      --check-bg:     rgba(40,160,80,0.07);
+      --check-border: rgba(40,160,80,0.2);
+      --check-color:  #2a8a4a;
+      --noise-op:     0;
+      --glow-op:      0;
+      --shadow:       0 2px 16px rgba(0,0,0,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: var(--noise-op);
+    }
+
+    body::after {
+      content: '';
+      position: fixed; top: -20vh; left: 50%; transform: translateX(-50%);
+      width: 80vw; height: 60vh;
+      background: radial-gradient(ellipse, rgba(201,168,76,var(--glow-op)) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Toolbar ── */
+    .toolbar {
+      position: fixed; top: 18px; right: 20px;
+      display: flex; gap: 8px; z-index: 100;
+    }
+
+    .toolbar-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 13px; border-radius: 20px;
+      border: 1px solid var(--border); background: var(--card);
+      color: var(--muted); font-family: 'DM Mono', monospace;
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow);
+      white-space: nowrap;
+    }
+
+    .toolbar-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .toolbar-btn svg { width: 13px; height: 13px; fill: currentColor; }
+
+    /* ── Layout ── */
+    .page {
+      position: relative; z-index: 1;
+      max-width: 860px; margin: 0 auto; padding: 60px 32px 80px;
+    }
+
+    /* ── Header ── */
+    header {
+      display: grid; grid-template-columns: 1fr auto; gap: 32px;
+      align-items: start; padding-bottom: 40px;
+      border-bottom: 1px solid var(--border); margin-bottom: 48px;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .header-text { display: flex; flex-direction: column; gap: 10px; }
+
+    .eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); font-weight: 400;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 6vw, 3.8rem); font-weight: 300;
+      line-height: 1.05; letter-spacing: -0.01em; color: var(--text);
+    }
+
+    .tagline { font-size: 0.95rem; color: var(--muted); max-width: 460px; margin-top: 4px; }
+
+    .avatar-wrap {
+      flex-shrink: 0; width: 108px; height: 108px; border-radius: 4px;
+      border: 1px solid var(--border); background: var(--card);
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+
+    .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .avatar-placeholder { display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: 0.3; }
+    .avatar-placeholder svg { width: 32px; height: 32px; fill: var(--muted); }
+    .avatar-placeholder span { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--muted); }
+
+    /* ── Section label ── */
+    .section-label {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-dim);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+    }
+
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    section { margin-bottom: 40px; animation: fadeUp 0.7s ease both; }
+    section:nth-child(2)  { animation-delay: 0.06s; }
+    section:nth-child(3)  { animation-delay: 0.12s; }
+    section:nth-child(4)  { animation-delay: 0.18s; }
+    section:nth-child(5)  { animation-delay: 0.24s; }
+    section:nth-child(6)  { animation-delay: 0.30s; }
+    section:nth-child(7)  { animation-delay: 0.36s; }
+    section:nth-child(8)  { animation-delay: 0.42s; }
+    section:nth-child(9)  { animation-delay: 0.48s; }
+    section:nth-child(10) { animation-delay: 0.54s; }
+
+    /* ── Stat grid ── */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      padding: 20px 22px; transition: border-color 0.2s, transform 0.2s, background 0.2s; cursor: default;
+    }
+
+    .stat-card:hover { border-color: var(--border-hover); transform: translateY(-2px); background: var(--card-hover); }
+    .stat-card .label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .stat-card .value { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 600; color: var(--text); line-height: 1; }
+    .stat-card .value.accent { color: var(--accent); }
+    .stat-card .sub { font-size: 0.78rem; color: var(--muted); margin-top: 5px; }
+
+    /* ── Highlight bar ── */
+    .highlight-bar {
+      background: linear-gradient(135deg, var(--accent-bg) 0%, var(--accent-bg2) 100%);
+      border: 1px solid rgba(201,168,76,0.2); border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0; padding: 16px 20px; font-size: 0.92rem;
+      color: var(--text); margin-bottom: 12px; line-height: 1.5;
+    }
+
+    .highlight-bar strong { color: var(--accent); font-weight: 500; }
+
+    /* ── Info list ── */
+    .info-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .info-row {
+      display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .info-row:hover { border-color: var(--border-hover); background: var(--card-hover); }
+    .info-row .key { font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); min-width: 140px; flex-shrink: 0; }
+    .info-row .val { font-size: 0.92rem; color: var(--text); flex: 1; }
+
+    /* ── Copy button ── */
+    .copy-btn {
+      margin-left: auto; padding: 4px 10px; border-radius: 4px;
+      border: 1px solid var(--border); background: transparent; color: var(--muted);
+      font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    }
+
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-btn.copied { border-color: var(--check-color); color: var(--check-color); }
+
+    /* ── Badge ── */
+    .badge {
+      display: inline-block; background: var(--accent-bg); border: 1px solid rgba(201,168,76,0.25);
+      color: var(--accent); border-radius: 3px; font-family: 'DM Mono', monospace;
+      font-size: 10px; letter-spacing: 0.1em; padding: 2px 7px; text-transform: uppercase;
+      margin-left: 6px; vertical-align: middle;
+    }
+
+    /* ── Bio ── */
+    .bio-text {
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      padding: 22px 24px; font-size: 0.95rem; color: var(--text); line-height: 1.75;
+    }
+
+    /* ── Checklist ── */
+    .checklist { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+
+    .check-item {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--check-bg); border: 1px solid var(--check-border);
+      border-radius: 6px; padding: 11px 14px; font-size: 0.88rem; color: var(--text);
+      transition: transform 0.15s;
+    }
+
+    .check-item:hover { transform: translateX(3px); }
+    .check-item .check-icon { color: var(--check-color); font-size: 1rem; flex-shrink: 0; }
+
+    /* ── Incentive card ── */
+    .incentive-card {
+      background: linear-gradient(135deg, var(--accent-bg) 0%, var(--accent-bg2) 100%);
+      border: 1px solid rgba(201,168,76,0.3); border-radius: 8px;
+      padding: 24px 26px; display: flex; align-items: flex-start; gap: 18px;
+    }
+
+    .incentive-icon { font-size: 1.8rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+    .incentive-body .title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
+    .incentive-body p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── FAQ accordion ── */
+    .faq-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .faq-item {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 6px; overflow: hidden; transition: border-color 0.2s;
+    }
+
+    .faq-item.open { border-color: var(--border-hover); }
+
+    .faq-question {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px; cursor: pointer; font-size: 0.92rem; color: var(--text);
+      font-weight: 400; user-select: none; transition: background 0.2s; gap: 12px;
+    }
+
+    .faq-question:hover { background: var(--card-hover); }
+    .faq-chevron { flex-shrink: 0; width: 16px; height: 16px; fill: var(--muted); transition: transform 0.25s ease; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+
+    .faq-answer {
+      max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.2s;
+      padding: 0 18px; font-size: 0.88rem; color: var(--muted); line-height: 1.7;
+    }
+
+    .faq-item.open .faq-answer { max-height: 200px; padding: 0 18px 14px; }
+
+    /* ── References ── */
+    .ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+
+    .ref-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 6px; padding: 18px 20px; transition: border-color 0.2s, background 0.2s;
+    }
+
+    .ref-card:hover { border-color: var(--border-hover); background: var(--card-hover); }
+    .ref-card .ref-type { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent-dim); margin-bottom: 6px; }
+    .ref-card .ref-name { font-size: 0.95rem; color: var(--text); font-weight: 500; margin-bottom: 3px; }
+    .ref-card .ref-detail { font-size: 0.82rem; color: var(--muted); }
+
+    /* ── Action buttons ── */
+    .action-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+
+    .action-btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px;
+      border-radius: 6px; border: 1px solid var(--accent); background: var(--accent-bg);
+      color: var(--accent); font-family: 'DM Mono', monospace; font-size: 11px;
+      letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
+      cursor: pointer; transition: all 0.2s; font-weight: 500;
+    }
+
+    .action-btn:hover { background: var(--accent); color: var(--text-inv); }
+    .action-btn svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .action-btn-ghost { border-color: var(--border); background: transparent; color: var(--muted); }
+    .action-btn-ghost:hover { border-color: var(--muted); background: var(--card); color: var(--text); }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px; animation: fadeUp 0.7s 0.6s ease both;
+    }
+
+    footer .prepared { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; color: var(--muted); text-transform: uppercase; }
+
+    footer a { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(201,168,76,0.3); padding-bottom: 1px; transition: border-color 0.2s, color 0.2s; }
+    footer a:hover { color: var(--text); border-color: var(--text); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { background: #fff !important; color: #111 !important; }
+      .toolbar, .action-row { display: none !important; }
+      body::before, body::after { display: none !important; }
+      .page { padding: 20px !important; max-width: 100% !important; }
+      .stat-card, .info-row, .faq-item, .ref-card, .check-item, .bio-text, .incentive-card { border-color: #ddd !important; background: #f9f9f9 !important; break-inside: avoid; }
+      .faq-answer { max-height: none !important; padding-bottom: 14px !important; }
+      section { break-inside: avoid; }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .page { padding: 36px 20px 60px; }
+      header { grid-template-columns: 1fr; }
+      .avatar-wrap { width: 80px; height: 80px; order: -1; }
+      .info-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .info-row .key { min-width: unset; }
+      .copy-btn { margin-left: 0; }
+      footer { flex-direction: column; align-items: flex-start; }
+      .toolbar { top: 12px; right: 12px; gap: 6px; }
+      .toolbar-btn span { display: none; }
+      .toolbar-btn { padding: 7px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── TOOLBAR ── -->
+<div class="toolbar">
+  <button class="toolbar-btn" onclick="toggleTheme()" id="themeBtn">
+    <svg id="themeIcon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+    <span id="themeLabel">Light Mode</span>
+  </button>
+  <button class="toolbar-btn" onclick="window.print()">
+    <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+    <span>Print / PDF</span>
+  </button>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-text">
+      <span class="eyebrow">Prospective Tenant Portfolio</span>
+      <h1>Michael Czarnecki</h1>
+      <p class="tagline">Executive Director in financial services. Astoria resident. Ideal long-term tenant.</p>
+    </div>
+    <div class="avatar-wrap">
+      <!-- To add your photo: replace the div below with <img src="photo.jpg" alt="Michael Czarnecki" /> -->
+      <div class="avatar-placeholder">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+        <span>Photo</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- AT A GLANCE -->
+  <section>
+    <div class="section-label">At a Glance</div>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="label">Annual Income</div>
+        <div class="value accent">$225K</div>
+        <div class="sub">Verified — JPMorganChase</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Credit Score</div>
+        <div class="value">800<span style="font-size:1.1rem;color:var(--muted)">+</span></div>
+        <div class="sub">Exceptional — top tier</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Income-to-Rent</div>
+        <div class="value accent">40×</div>
+        <div class="sub">Comfortably exceeds standard</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Available</div>
+        <div class="value" style="font-size:1.35rem;line-height:1.1;">30 Days</div>
+        <div class="sub">Flexible within window</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RENTAL PROFILE -->
+  <section>
+    <div class="section-label">Rental Profile</div>
+    <div class="info-list">
+      <div class="info-row"><span class="key">Occupancy</span><span class="val">Single tenant — no additional occupants</span></div>
+      <div class="info-row"><span class="key">Pets</span><span class="val">None <span class="badge">No Pets</span></span></div>
+      <div class="info-row"><span class="key">Smoking</span><span class="val">Non-smoker</span></div>
+      <div class="info-row"><span class="key">Lease Term</span><span class="val">12-month lease preferred <span class="badge">Open to Longer</span></span></div>
+      <div class="info-row"><span class="key">Target Area</span><span class="val">Astoria, Queens — current neighborhood resident</span></div>
+      <div class="info-row"><span class="key">Current Address</span><span class="val">Astoria, Queens — full address available upon request</span></div>
+      <div class="info-row"><span class="key">Move-in Date</span><span class="val">Within 30 days — flexible, can align to landlord's preference</span></div>
+      <div class="info-row"><span class="key">Eviction History</span><span class="val">None</span></div>
+    </div>
+  </section>
+
+  <!-- EMPLOYMENT & FINANCES -->
+  <section>
+    <div class="section-label">Employment &amp; Financial Standing</div>
+    <div class="info-list">
+      <div class="info-row"><span class="key">Employer</span><span class="val">JPMorganChase <span class="badge">Finance</span></span></div>
+      <div class="info-row"><span class="key">Title</span><span class="val">Executive Director</span></div>
+      <div class="info-row"><span class="key">Work Location</span><span class="val">New York, NY — hybrid schedule</span></div>
+      <div class="info-row"><span class="key">Annual Income</span><span class="val">$225,000 — employment verification available upon request</span></div>
+      <div class="info-row"><span class="key">Liquid Assets</span><span class="val">Substantial savings available, inclusive of liquid investment accounts</span></div>
+      <div class="info-row"><span class="key">Industry Tenure</span><span class="val">20+ years in financial services and technology</span></div>
+      <div class="info-row"><span class="key">Co-Signers</span><span class="val">Not required — financially independent and self-qualifying</span></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section>
+    <div class="section-label">About</div>
+    <div class="bio-text">
+      Executive Director with 20+ years of leadership in financial services and technology, currently serving at JPMorganChase. Formerly held director-level roles at Capital One, Norges Bank Investment Management, and the U.S. Department of Veterans Affairs. Holds advanced professional certifications including CISSP, CISM, CRISC, CISA, CCSP, and a Harvard Business School certificate in AI &amp; Business Strategy. A long-standing Astoria resident and community member — seeking to remain in the neighborhood for the long term, not simply looking for any available unit.
+    </div>
+  </section>
+
+  <!-- APPLICATION READINESS -->
+  <section>
+    <div class="section-label">Application Readiness</div>
+    <div class="highlight-bar" style="margin-bottom:16px;">
+      All standard documentation is on hand and can be delivered <strong>same-day upon request</strong>. Zero friction from application to approval.
+    </div>
+    <div class="checklist">
+      <div class="check-item"><span class="check-icon">✓</span> Recent pay stubs (2–3 months)</div>
+      <div class="check-item"><span class="check-icon">✓</span> Bank statements (3 months)</div>
+      <div class="check-item"><span class="check-icon">✓</span> Prior year tax returns (W-2)</div>
+      <div class="check-item"><span class="check-icon">✓</span> Government-issued photo ID</div>
+      <div class="check-item"><span class="check-icon">✓</span> Credit report authorization</div>
+      <div class="check-item"><span class="check-icon">✓</span> Employment verification letter</div>
+      <div class="check-item"><span class="check-icon">✓</span> LinkedIn profile (publicly verifiable)</div>
+      <div class="check-item"><span class="check-icon">✓</span> Professional references on request</div>
+    </div>
+  </section>
+
+
+
+  <!-- FAQ -->
+  <section>
+    <div class="section-label">Quick Answers</div>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Why are you looking to move?
+          <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+        <div class="faq-answer">Looking to upgrade within Astoria — same neighborhood I've lived in for years. This is about finding a better-suited space, not relocating. I have deep ties to the community and have no interest in leaving Queens.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          How long have you lived in Astoria?
+          <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+        <div class="faq-answer">I've been an Astoria resident for several years and intend to remain here long-term. I'm familiar with the neighborhood, local businesses, and community — this isn't a transient move.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Do you work remotely or in-office?
+          <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+        <div class="faq-answer">I work a hybrid schedule at JPMorganChase's New York City offices and am in-office regularly during the week. The apartment will be a calm, well-maintained primary residence — not a home office hub or event space.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Any eviction history or past rental issues?
+          <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+        <div class="faq-answer">None whatsoever. Clean rental and financial history throughout. A full background and credit check is welcomed and can be authorized immediately upon request.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Will there be a co-signer or guarantor?
+          <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+        <div class="faq-answer">Not required. I am fully self-qualifying — income, credit score, and liquid assets are more than sufficient to meet any standard rental criteria independently.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Are you open to a longer lease?
+          <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+        <div class="faq-answer">Absolutely. I prefer a 12-month lease but am fully open to a 24-month or longer arrangement. Stability is a priority — I have no interest in short-term tenancy.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Will you have frequent guests or host events?
+          <svg class="faq-chevron" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+        <div class="faq-answer">No. I'm a single professional with a demanding schedule. The apartment will be quiet, clean, and well-maintained at all times. No parties, no events.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- REFERENCES -->
+  <section>
+    <div class="section-label">References</div>
+    <div class="highlight-bar">
+      Professional and personal references available upon request. Employment verification through <strong>JPMorganChase HR</strong> can be arranged. Credit report authorization available at any stage of the process.
+    </div>
+    <div class="ref-grid">
+      <div class="ref-card">
+        <div class="ref-type">Employer Reference</div>
+        <div class="ref-name">JPMorganChase</div>
+        <div class="ref-detail">Direct manager available upon request</div>
+      </div>
+      <div class="ref-card">
+        <div class="ref-type">Professional Reference</div>
+        <div class="ref-name">Available on Request</div>
+        <div class="ref-detail">Senior finance &amp; technology peers</div>
+      </div>
+      <div class="ref-card">
+        <div class="ref-type">Personal Reference</div>
+        <div class="ref-name">Available on Request</div>
+        <div class="ref-detail">Long-standing community contacts, Astoria</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section>
+    <div class="section-label">Contact</div>
+    <div class="info-list">
+      <div class="info-row">
+        <span class="key">Phone</span>
+        <span class="val">(973) 486-4803</span>
+        <button class="copy-btn" onclick="copyText('(973) 486-4803', this)">Copy</button>
+      </div>
+      <div class="info-row">
+        <span class="key">Email</span>
+        <span class="val">mczarneckiitsearch@gmail.com</span>
+        <button class="copy-btn" onclick="copyText('mczarneckiitsearch@gmail.com', this)">Copy</button>
+      </div>
+      <div class="info-row">
+        <span class="key">LinkedIn</span>
+        <span class="val">
+          <a href="https://www.linkedin.com/in/michael-czarnecki-421849ab/" target="_blank" rel="noopener"
+             style="color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(201,168,76,0.3);">
+            linkedin.com/in/michael-czarnecki-421849ab
+          </a>
+        </span>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <a class="action-btn"
+         href="mailto:mczarneckiitsearch@gmail.com?subject=Rental%20Application%20—%20Document%20Request&body=Hi%20Michael%2C%0A%0AI%20reviewed%20your%20tenant%20portfolio%20and%20would%20like%20to%20request%20your%20full%20application%20document%20package%20for%20the%20unit%20at%20%5BADDRESS%5D.%0A%0APlease%20send%20at%20your%20earliest%20convenience.%0A%0AThank%20you.">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Request Document Package
+      </a>
+      <a class="action-btn action-btn-ghost"
+         href="https://www.linkedin.com/in/michael-czarnecki-421849ab/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+        View LinkedIn Profile
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="prepared">Prepared by Michael Czarnecki · May 2026</span>
+    <a href="https://www.linkedin.com/in/michael-czarnecki-421849ab/" target="_blank" rel="noopener">linkedin.com/in/michael-czarnecki-421849ab ↗</a>
+  </footer>
+
+</div>
+
+<script>
+  /* Theme toggle */
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeLabel').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+    document.getElementById('themeIcon').innerHTML = isDark
+      ? '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-12.37l-1.06 1.06a.996.996 0 0 0 0 1.41c.39.39 1.03.39 1.41 0l1.06-1.06a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0zM7.05 18.36l-1.06 1.06a.996.996 0 0 0 0 1.41c.39.39 1.03.39 1.41 0l1.06-1.06a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0z"/>'
+      : '<path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>';
+  }
+
+  /* FAQ accordion */
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  /* Copy to clipboard */
+  function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+    });
+  }
+</script>
+</body>
+</html>
